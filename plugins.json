@@ -427,11 +427,12 @@
     {
       "id": "vpn",
       "name": "VPN",
-      "version": "1.1.0",
-      "description": "An Xray VPN client: subscriptions, location picker, server ping, split tunneling and a TUN mode behind a one-time password. Reads the same subscriptions as Fortuna and Happ.",
+      "version": "1.1.1",
+      "description": "A VPN client built on Xray and sing-box: subscriptions, location picker, server ping, split tunneling and a TUN mode behind a one-time password. Reads the same subscriptions as Fortuna and Happ.",
       "author": "SugarJora",
       "repository": "https://github.com/SugarJora/angelos-vpn",
-      "source": "https://github.com/SugarJora/angelos-vpn/releases/download/v1.1.0/vpn-v1.1.0.zip",
+      "source": "https://github.com/SugarJora/angelos-vpn/releases/download/v1.1.1/vpn-v1.1.1.zip",
+      "sha256": "550cc5cb0c872012fd82603e396b2020d7640a8c585d9061d78382676da59509",
       "category": "Network",
       "tags": [
         "vpn",
