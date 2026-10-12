@@ -404,7 +404,7 @@
         "opencode"
       ],
       "permissions": [],
-      "status": "pending"
+      "status": "approved"
     },
     {
       "id": "favorite-games",
@@ -450,7 +450,7 @@
         "network — VPN traffic through the tunnel",
         "privileged-helper — a root helper that builds the sing-box configuration; installed once through a polkit prompt and validated argument by argument"
       ],
-      "status": "pending",
+      "status": "approved",
       "icon": "lock"
     }
   ]
