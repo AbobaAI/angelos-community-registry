@@ -143,8 +143,13 @@ def validate_archive(entry):
             raise RuntimeError("Manifest ID does not match registry")
         if str(manifest.get("version", "")) != str(entry.get("version", "")):
             raise RuntimeError("Manifest version does not match registry")
-        if not isinstance(manifest.get("name"), str) or not manifest["name"].strip():
-            raise RuntimeError("Manifest name is missing")
+        name = manifest.get("name")
+        valid_name = isinstance(name, str) and bool(name.strip())
+        if isinstance(name, dict):
+            valid_name = bool(name) and any(k in name for k in ("ru", "en")) and all(
+                isinstance(k, str) and isinstance(v, str) and bool(v.strip()) for k, v in name.items())
+        if not valid_name:
+            raise RuntimeError("Manifest name must be a nonempty string or localized ru/en label")
         return "archive OK: {} files, manifest {} {}".format(len(list(root.rglob("*"))), manifest["id"], manifest["version"])
 
 
