@@ -363,8 +363,13 @@ def validate_archive(entry):
             raise RuntimeError("Manifest ID does not match registry entry")
         if str(manifest.get("version", "")) != str(entry.get("version", "")):
             raise RuntimeError("Manifest version does not match registry entry")
-        if not isinstance(manifest.get("name"), str) or not manifest["name"].strip():
-            raise RuntimeError("Manifest name is missing")
+        name = manifest.get("name")
+        valid_name = isinstance(name, str) and bool(name.strip())
+        if isinstance(name, dict):
+            valid_name = bool(name) and any(k in name for k in ("ru", "en")) and all(
+                isinstance(k, str) and isinstance(v, str) and bool(v.strip()) for k, v in name.items())
+        if not valid_name:
+            raise RuntimeError("Manifest name must be a nonempty string or localized ru/en label")
 
 
 def approve_registry_entries(plugin_ids, pr_number):
@@ -391,6 +396,56 @@ def approve_registry_entries(plugin_ids, pr_number):
         "branch": "main"
     })
     return result.get("commit", {}).get("sha", "")
+
+
+def reconcile_merged_listings(state):
+    """Finish publication after merges made outside Telegram, or a failed post-merge write."""
+    now = time.time()
+    if now - state.get("last_listing_reconcile", 0) < 300:
+        return
+    state["last_listing_reconcile"] = now
+    response = github("/repos/{}/contents/plugins.json?ref=main".format(REPO))
+    payload = json.loads(base64.b64decode(response["content"]).decode("utf-8"))
+    pending = {e["id"]: e for e in payload.get("plugins", []) if e.get("status") == "pending"}
+    if not pending:
+        return
+    # Only merged PRs to main constitute approval; a closed/rejected PR never does.
+    prs = github("/repos/{}/pulls?state=closed&sort=updated&direction=desc&per_page=100".format(REPO))
+    approved = set()
+    for pr in prs:
+        if not pr.get("merged_at") or pr.get("base", {}).get("ref") != "main":
+            continue
+        changes, error = changed_plugins(pr)
+        if error:
+            continue
+        for change in changes:
+            plugin_id = change.get("id")
+            if plugin_id not in pending or plugin_id in approved or change.get("_removed"):
+                continue
+            entry = {k: v for k, v in change.items() if k not in ("_change", "_removed")}
+            # Match every field: an older accepted version cannot approve a newer entry.
+            if entry != pending[plugin_id]:
+                continue
+            try:
+                validate_archive(entry)
+            except Exception as exc:
+                print("Listing validation failed for {}: {}".format(plugin_id, safe_error(exc)), flush=True)
+                continue
+            approved.add(plugin_id)
+        if approved == set(pending):
+            break
+    if not approved:
+        return
+    for entry in payload["plugins"]:
+        if entry.get("id") in approved:
+            entry["status"] = "approved"
+    # Compare-and-swap protects concurrent changes to the registry.
+    github("/repos/{}/contents/plugins.json".format(REPO), "PUT", {
+        "message": "Activate validated listings from merged PRs: " + ", ".join(sorted(approved)),
+        "content": base64.b64encode((json.dumps(payload, ensure_ascii=False, indent=2) + "\n").encode()).decode(),
+        "sha": response["sha"], "branch": "main"
+    })
+    print("Activated merged listings: " + ", ".join(sorted(approved)), flush=True)
 
 
 def format_pr(pr):
@@ -912,6 +967,7 @@ def main():
                 save_state(state)
                 flush_outbox(state)
             try:
+                reconcile_merged_listings(state)
                 notify_new_prs(state)
                 save_state(state)
                 flush_outbox(state)
