@@ -1,0 +1,19 @@
+{
+  "id": "touchpad-flex",
+  "name": "Гибкий тачпад",
+  "version": "1.0.0",
+  "author": "futureUnd1ground",
+  "license": "MIT",
+  "repository": "https://github.com/futureUnd1ground/angelos-community-registry",
+  "permissions": ["Read and write niri touchpad configuration through InputConfig", "Read and write angelOS gesture preferences and plugin profiles"],
+  "description": "Профили тачпада: работа, игры, планшет и точная ручная настройка. Быстрое включение на панели.",
+  "icon": "touchpad",
+  "enabledByDefault": true,
+  "themes": ["pixel", "mac"],
+  "settingsNear": "touchpad",
+  "barWidget": "BarWidget.qml",
+  "settings": "Settings.qml",
+  "menu": [
+    { "label": "Тачпад: настройки", "icon": "touchpad", "settings": "plugin:touchpad-flex" }
+  ]
+}
