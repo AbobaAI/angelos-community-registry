@@ -4,11 +4,11 @@
     {
       "id": "touchpad-flex",
       "name": "Гибкий тачпад / Touchpad Flex",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "futureUnd1ground",
-      "description": "Редактируемые профили тачпада: работа, точность, игры и планшет. Скорость, прокрутка, клики, жесты и возврат предыдущих настроек.",
-      "source": "https://github.com/futureUnd1ground/angelos-community-registry/releases/download/touchpad-flex-v1.0.0/touchpad-flex-v1.0.0.zip",
-      "sha256": "cee11dfa7ed36874ded43d6b4d56be63b2b473263bb67420f54f2f458ca0a2a0",
+      "description": "Профили, 21 дополнительный жест, свои команды, 8 порогов распознавания и глубокая настройка прокрутки/перетаскивания. Без кнопки на панели.",
+      "source": "https://github.com/futureUnd1ground/angelos-community-registry/releases/download/touchpad-flex-v1.1.0/touchpad-flex-v1.1.0.zip",
+      "sha256": "7a27bdde4e1415ac26090076de5a3f89ca92c1c036bfcee1075ec01b944bb6d8",
       "repository": "https://github.com/futureUnd1ground/angelos-community-registry",
       "sourcePath": "plugins/touchpad-flex",
       "license": "MIT",
@@ -16,7 +16,7 @@
       "category": "Utilities",
       "tags": ["touchpad", "input", "gestures", "profiles"],
       "dependencies": ["AngelOS InputConfig, Laptop and Gestures services", "niri"],
-      "permissions": ["Read and write niri touchpad configuration through InputConfig", "Read and write angelOS gesture preferences and plugin profiles"],
+      "permissions": ["Read and write niri touchpad configuration through InputConfig", "Read and write angelOS gesture preferences and plugin profiles", "Optional read-only access to touchpad input events", "Run user-defined gesture commands when explicitly assigned"],
       "status": "approved"
     },
     {
