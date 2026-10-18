@@ -2,6 +2,7 @@ import QtQuick
 import qs.config
 import qs.services
 import qs.widgets
+import "GestureOptions.js" as Extra
 
 Column {
     id: root
@@ -35,11 +36,14 @@ Column {
     }
     function snapshot() {
         return {
-            "flags": {"tap": flag("tap"), "dwt": flag("dwt"), "disabled-on-external-mouse": flag("disabled-on-external-mouse"), "natural-scroll": InputConfig.naturalScroll},
+            "flags": {"tap": flag("tap"), "dwt": flag("dwt"), "dwtp": flag("dwtp"), "drag-lock": flag("drag-lock"), "disabled-on-external-mouse": flag("disabled-on-external-mouse"), "natural-scroll": InputConfig.naturalScroll},
             "values": {"accel-speed": number("accel-speed", 0), "click-method": value("click-method", "button-areas"), "tap-button-map": value("tap-button-map", "left-right-middle"), "scroll-method": value("scroll-method", "two-finger"), "scroll-factor": number("scroll-factor", 1), "drag": value("drag", "true") !== "false", "accel-profile": value("accel-profile", "adaptive")},
             "gestureSensitivity": Config.gestures.sensitivity,
-            "gesturesEnabled": Config.gestures.enabled,
-            "gestureMap": Object.assign({}, Config.gestures.map || {})
+            "gesturesEnabled": plugin.get("nativeBeforeExtra", null) === null ? Config.gestures.enabled : plugin.get("nativeBeforeExtra", true),
+            "gestureMap": Object.assign({}, Config.gestures.map || {}),
+            "extraEnabled": plugin.get("extraEnabled", false),
+            "thresholds": Object.assign({}, plugin.get("thresholds", {})),
+            "commands": Object.assign({}, plugin.get("commands", {}))
         };
     }
     function apply(p) {
@@ -47,10 +51,15 @@ Column {
             return false;
         InputConfig.save({"touchpad": {"flags": Object.assign({}, p.flags), "values": Object.assign({}, p.values)}});
         Config.gestures.sensitivity = p.gestureSensitivity;
-        if (p.gesturesEnabled !== undefined)
-            Config.gestures.enabled = p.gesturesEnabled;
+        if (p.gesturesEnabled !== undefined) {
+            if (plugin.get("nativeBeforeExtra", null) !== null)
+                plugin.set("nativeBeforeExtra", p.gesturesEnabled);
+            else Config.gestures.enabled = p.gesturesEnabled;
+        }
         if (p.gestureMap !== undefined)
             Config.gestures.map = Object.assign({}, p.gestureMap);
+        for (const key of ["extraEnabled", "thresholds", "commands"])
+            if (p[key] !== undefined) plugin.set(key, p[key]);
         return true;
     }
     function applyProfile(id) {
@@ -93,6 +102,11 @@ Column {
         const values = {};
         values[name] = v;
         InputConfig.save({"touchpad": {"values": values}});
+    }
+    function setExtra(key, name, value) {
+        const values = Object.assign({}, plugin.get(key, {}));
+        values[name] = value;
+        plugin.set(key, values);
     }
 
     PxGroup {
@@ -144,7 +158,7 @@ Column {
         }
         SettingRow {
             label: I18n.t("Скорость прокрутки", "Scroll speed")
-            PxSlider { width: Skin.px(140); from: 0.2; to: 3; stepSize: 0.1; decimals: 1; suffix: "×"; live: false; value: root.number("scroll-factor", 1); onReleased: v => root.setValue("scroll-factor", Math.abs(v - 1) < 0.05 ? null : v) }
+            PxSlider { width: Skin.px(140); from: 0.1; to: 5; stepSize: 0.1; decimals: 1; suffix: "×"; live: false; value: root.number("scroll-factor", 1); onReleased: v => root.setValue("scroll-factor", Math.abs(v - 1) < 0.05 ? null : v) }
         }
     }
 
@@ -159,9 +173,11 @@ Column {
         }
         SettingRow {
             label: I18n.t("Прокрутка", "Scrolling")
-            PxSegmented { model: [{"label": I18n.t("двумя пальцами", "two fingers"), "value": "two-finger"}, {"label": I18n.t("по краю", "edge"), "value": "edge"}]; currentValue: root.value("scroll-method", "two-finger"); onActivated: v => root.setValue("scroll-method", v === "two-finger" ? null : v) }
+            PxCombo { model: [{"label": I18n.t("двумя пальцами", "two fingers"), "value": "two-finger"}, {"label": I18n.t("по краю", "edge"), "value": "edge"}, {"label": I18n.t("выключена", "disabled"), "value": "no-scroll"}]; currentValue: root.value("scroll-method", "two-finger"); onActivated: v => root.setValue("scroll-method", v === "two-finger" ? null : v) }
         }
         SettingRow { label: I18n.t("Перетаскивание касанием", "Tap and drag"); PxToggle { checked: root.value("drag", "true") !== "false"; onToggled: v => root.setValue("drag", v ? null : false) } }
+        SettingRow { label: I18n.t("Фиксация перетаскивания", "Drag lock"); hint: I18n.t("Поднять палец и продолжить перетаскивание", "Lift your finger and continue dragging"); PxToggle { checked: InputConfig.tpFlag("drag-lock"); onToggled: v => root.setFlag("drag-lock", v) } }
+        SettingRow { label: I18n.t("Отключать при работе с трекпоинтом", "Disable while using a trackpoint"); PxToggle { checked: InputConfig.tpFlag("dwtp"); onToggled: v => root.setFlag("dwtp", v) } }
         SettingRow {
             label: I18n.t("Касания 2 / 3 пальцами", "Two / three finger taps")
             PxCombo { model: [{"label": I18n.t("правый / средний", "right / middle"), "value": "left-right-middle"}, {"label": I18n.t("средний / правый", "middle / right"), "value": "left-middle-right"}]; currentValue: root.value("tap-button-map", "left-right-middle"); onActivated: v => root.setValue("tap-button-map", v) }
@@ -177,7 +193,7 @@ Column {
         title: I18n.t("Жесты angelOS", "angelOS gestures")
         icon: "sparkle"
         width: parent.width
-        SettingRow { label: I18n.t("Включены", "Enabled"); PxToggle { checked: Config.gestures.enabled; onToggled: v => Config.gestures.enabled = v } }
+        SettingRow { label: I18n.t("Включены", "Enabled"); hint: root.plugin && root.plugin.get("extraEnabled", false) ? I18n.t("Сейчас их обрабатывает расширенный движок; отключи его для изменения этого переключателя", "Handled by the extended engine; turn it off to change this switch") : ""; PxToggle { enabled: !root.plugin || !root.plugin.get("extraEnabled", false); checked: Config.gestures.enabled || !!root.plugin && root.plugin.get("extraEnabled", false) && root.plugin.get("nativeBeforeExtra", true); onToggled: v => Config.gestures.enabled = v } }
         SettingRow {
             label: I18n.t("Чувствительность", "Sensitivity")
             PxSegmented { model: [{"label": I18n.t("низкая", "low"), "value": "low"}, {"label": I18n.t("обычная", "normal"), "value": "normal"}, {"label": I18n.t("высокая", "high"), "value": "high"}]; currentValue: Config.gestures.sensitivity; onActivated: v => Config.gestures.sensitivity = v }
@@ -191,6 +207,77 @@ Column {
                 PxCombo { model: Gestures.actions; currentValue: Gestures.actionOf(gestureRow.modelData); onActivated: v => Gestures.setAction(gestureRow.modelData, v) }
             }
         }
+    }
+    PxGroup {
+        title: I18n.t("Расширенные жесты", "Extended gestures")
+        icon: "sparkle"
+        width: parent.width
+        enabled: root.ready
+        SettingRow {
+            label: I18n.t("Дополнительное распознавание", "Extended recognition")
+            hint: I18n.t("Нужен доступ к тачпаду; зависит от числа пальцев, которое он распознаёт", "Requires touchpad access; depends on the finger count supported by the hardware")
+            PxToggle { checked: !!root.plugin && root.plugin.get("extraEnabled", false); onToggled: v => root.plugin.set("extraEnabled", v) }
+        }
+        PxText {
+            width: parent.width
+            wrapMode: Text.Wrap
+            text: I18n.t("Состояние: ", "Status: ") + Runtime.status + (Runtime.lastGesture ? " · " + Runtime.lastGesture : "") + (Runtime.status === "noperm" ? I18n.t(". Нет доступа к /dev/input; требуется настроенный доступ input.", ". No access to /dev/input; input access must be configured.") : "")
+        }
+        Repeater {
+            model: Extra.ids
+            Column {
+                id: extraRow
+                required property string modelData
+                width: parent ? parent.width : 0
+                spacing: Skin.px(4)
+                SettingRow {
+                    label: Extra.label(extraRow.modelData, I18n.t("ru", "en") === "ru")
+                    PxCombo {
+                        model: Gestures.actions.concat([{"label": I18n.t("Своя команда…", "Custom command…"), "value": "command"}])
+                        currentValue: Gestures.actionOf(extraRow.modelData)
+                        onActivated: v => Gestures.setAction(extraRow.modelData, v)
+                    }
+                }
+                PxField {
+                    visible: Gestures.actionOf(extraRow.modelData) === "command"
+                    width: parent.width
+                    text: root.plugin ? root.plugin.get("commands", {})[extraRow.modelData] || "" : ""
+                    placeholder: "playerctl play-pause"
+                    onAccepted: root.setExtra("commands", extraRow.modelData, text)
+                }
+            }
+        }
+        PxText {
+            width: parent.width
+            wrapMode: Text.Wrap
+            text: I18n.t("Команду сохрани Enter. Удержание срабатывает при отпускании пальцев. Пятипальцевые жесты требуют поддержки устройства. Свайпы тремя пальцами остаются у niri.", "Press Enter to save a command. Holds trigger on finger release. Five-finger gestures require hardware support. Three-finger swipes remain controlled by niri.")
+        }
+    }
+    PxGroup {
+        title: I18n.t("Пороги распознавания", "Recognition thresholds")
+        icon: "gear"
+        width: parent.width
+        enabled: root.ready
+        Repeater {
+            model: Extra.thresholds
+            SettingRow {
+                id: thresholdRow
+                required property var modelData
+                label: I18n.t(modelData.ru, modelData.en)
+                PxSlider {
+                    width: Skin.px(140)
+                    from: thresholdRow.modelData.min
+                    to: thresholdRow.modelData.max
+                    stepSize: thresholdRow.modelData.step
+                    suffix: thresholdRow.modelData.suffix
+                    decimals: thresholdRow.modelData.step < 1 ? 2 : 0
+                    live: false
+                    value: root.plugin ? root.plugin.get("thresholds", {})[thresholdRow.modelData.key] === undefined ? thresholdRow.modelData.def : root.plugin.get("thresholds", {})[thresholdRow.modelData.key] : thresholdRow.modelData.def
+                    onReleased: v => root.setExtra("thresholds", thresholdRow.modelData.key, v)
+                }
+            }
+        }
+        PxButton { text: I18n.t("Сбросить пороги", "Reset thresholds"); onClicked: root.plugin.set("thresholds", {}) }
     }
     PxText {
         width: parent.width

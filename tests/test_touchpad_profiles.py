@@ -32,15 +32,21 @@ vm.createContext(sandbox);
 vm.runInContext('var builtinProfiles = ' + input.profiles + '; var ready = true; var selectedProfile = "work"; var log = "";\n' + input.functions, sandbox);
 const plain = obj => JSON.parse(JSON.stringify(obj));
 // Saving false flags must not silently turn tap or disable-while-typing on.
+sandbox.plugin.set('thresholds', {swipeMm:35});
+sandbox.plugin.set('commands', {tap5:'playerctl play-pause'});
 sandbox.saveProfile();
 assert.equal(saved.custom_work.flags.tap, false);
 assert.equal(saved.custom_work.flags.dwt, false);
 sandbox.Config.gestures.map = {tap4: 'angel'};
+sandbox.plugin.set('thresholds', {swipeMm:10});
 sandbox.applyProfile('work');
+assert.equal(saved.thresholds.swipeMm,35);
+assert.equal(saved.commands.tap5,'playerctl play-pause');
 assert.equal(writes[0].touchpad.flags.tap, false);
 assert.equal(sandbox.Config.gestures.enabled, false);
 assert.deepEqual(plain(sandbox.Config.gestures.map), {tap4: 'lock'});
 sandbox.undoProfile();
+assert.equal(saved.thresholds.swipeMm,10);
 assert.deepEqual(plain(sandbox.Config.gestures.map), {tap4: 'angel'});
 assert.equal(saved.previous, null);
 for (const id of ['precision', 'gaming', 'tablet']) {
