@@ -120,19 +120,29 @@ or follow logs with `journalctl --user -u angelos-community-registry-telegram-bo
 
 A moderator must open the bot and send `/start` once to subscribe the chat.
 Every PR message includes buttons for `Open PR`, `Approve review`, `Reject`,
-`Merge`, and `Refresh`. Text commands remain available: `/inbox`, `/status`,
-`/approve N`, `/reject N`, and `/merge N`. The bot checks the allowlist for both
+`Merge`, `Refresh`, and a prompt for adding a condition. Text commands remain
+available: `/inbox`, `/status`, `/approve N`, `/reject N`, `/merge N`, and
+`/conditions N text`. Conditions are posted as a GitHub PR comment so the author
+sees them. The bot checks the allowlist for both
 buttons and text commands; tokens are never stored in Git.
 
-The bot compares each PR's `plugins.json` with `main`, reports only added,
-updated, or removed entries, and validates changed plugin archives and manifests
-before merging. A PR without a changed plugin entry cannot be merged through the
-bot. After a validated merge, changed plugin listings are marked `approved` so
+Outgoing messages use a persistent FIFO queue. Each new or updated PR sends its
+own card to subscribed chats; the bot spaces messages to the same chat,
+honors Telegram rate limits, and retains undelivered messages across restarts.
+`/status` reports the pending queue size. Messages rejected because a recipient
+blocked the bot are recorded and removed without blocking other moderators.
+
+The bot compares the PR base and head versions of `plugins.json`, including PRs
+from forks, and reports only added, updated, or removed entries. It validates
+changed plugin archives and manifests before merging. A PR without a changed
+plugin entry cannot be merged through the bot. After a validated merge, changed plugin listings are marked `approved` so
 they appear in the Store. Set `GITHUB_TOKEN` with `Contents: write`,
 `Pull requests: write`, and `Issues: write` for rejection comments and listing
 approval. `/stop` disables notifications. After upgrading, subscribed
 moderators should send `/start` again because old chat IDs without a saved
 username are discarded.
+Use `/errors` to inspect the latest delivery failures; `/status` shows the
+open PR count, queue size, subscription state, and delivery error count.
 
 Commands and action buttons work only in a private chat with the bot.
 

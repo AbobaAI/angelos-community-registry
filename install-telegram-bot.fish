@@ -12,7 +12,7 @@ or begin
 end
 
 cp $root/scripts/community-registry-telegram-bot.py $data_dir/community-registry-telegram-bot.py
-cp $root/telegram-moderators.json $data_dir/telegram-moderators.json
+cp $root/telegram-moderators.json $HOME/.local/share/telegram-moderators.json
 chmod 755 $data_dir/community-registry-telegram-bot.py
 
 if not test -f $config_dir/telegram-bot.env
