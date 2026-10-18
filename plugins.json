@@ -462,11 +462,19 @@
       "repository": "https://github.com/Rotmayer24/dns-switch",
       "source": "https://github.com/Rotmayer24/dns-switch/releases/download/v1.0.0/dns-switch.zip",
       "category": "Network",
-      "tags": ["dns", "network", "bar"],
+      "tags": [
+        "dns",
+        "network",
+        "bar"
+      ],
       "license": "MIT",
-      "dependencies": ["NetworkManager (nmcli)"],
-      "permissions": ["edit the active connection's DNS through nmcli (polkit, no root)"],
-      "status": "pending"
+      "dependencies": [
+        "NetworkManager (nmcli)"
+      ],
+      "permissions": [
+        "edit the active connection's DNS through nmcli (polkit, no root)"
+      ],
+      "status": "approved"
     }
   ]
 }
