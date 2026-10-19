@@ -494,6 +494,35 @@
         "edit the active connection's DNS through nmcli (polkit, no root)"
       ],
       "status": "approved"
+    },
+    {
+      "id": "live-wallpaper",
+      "name": "Live Wallpaper",
+      "version": "1.5.0",
+      "description": "Animated wallpaper (MP4, WebM, GIF, WebP) with automatic discovery in ~/Pictures: a desktop card or a fullscreen layer with desktop widgets kept on top; pause, speed, loop, scale; sound is off by default.",
+      "author": "Rotmayer24",
+      "repository": "https://github.com/Rotmayer24/AngelOS-live-wallpaper",
+      "source": "https://github.com/Rotmayer24/AngelOS-live-wallpaper/releases/download/v1.5.0/live-wallpaper-v1_5_0.zip",
+
+      "category": "Desktop",
+      "tags": [
+        "wallpaper",
+        "animated",
+        "desktop",
+        "video",
+        "gif",
+        "webp"
+      ],
+      "dependencies": [
+        "Qt 6 Multimedia",
+        "ffmpeg (fallback playback for GIF/WebP)"
+      ],
+      "permissions": [
+        "Read local media files from the configured library (default ~/Pictures)",
+        "Read and write plugin settings through the angelOS plugin API"
+      ],
+      "license": "MIT",
+      "status": "pending"
     }
   ]
 }
