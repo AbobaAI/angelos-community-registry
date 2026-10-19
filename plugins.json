@@ -12,11 +12,27 @@
       "repository": "https://github.com/futureUnd1ground/angelos-community-registry",
       "sourcePath": "plugins/touchpad-flex",
       "license": "MIT",
-      "themes": ["pixel", "mac"],
+      "themes": [
+        "pixel",
+        "mac"
+      ],
       "category": "Utilities",
-      "tags": ["touchpad", "input", "gestures", "profiles"],
-      "dependencies": ["AngelOS InputConfig, Laptop and Gestures services", "niri"],
-      "permissions": ["Read and write niri touchpad configuration through InputConfig", "Read and write angelOS gesture preferences and plugin profiles", "Optional read-only access to touchpad input events", "Run user-defined gesture commands when explicitly assigned"],
+      "tags": [
+        "touchpad",
+        "input",
+        "gestures",
+        "profiles"
+      ],
+      "dependencies": [
+        "AngelOS InputConfig, Laptop and Gestures services",
+        "niri"
+      ],
+      "permissions": [
+        "Read and write niri touchpad configuration through InputConfig",
+        "Read and write angelOS gesture preferences and plugin profiles",
+        "Optional read-only access to touchpad input events",
+        "Run user-defined gesture commands when explicitly assigned"
+      ],
       "status": "approved"
     },
     {
@@ -503,7 +519,6 @@
       "author": "Rotmayer24",
       "repository": "https://github.com/Rotmayer24/AngelOS-live-wallpaper",
       "source": "https://github.com/Rotmayer24/AngelOS-live-wallpaper/releases/download/v1.5.0/live-wallpaper-v1_5_0.zip",
-
       "category": "Desktop",
       "tags": [
         "wallpaper",
@@ -522,7 +537,7 @@
         "Read and write plugin settings through the angelOS plugin API"
       ],
       "license": "MIT",
-      "status": "pending"
+      "status": "approved"
     }
   ]
 }
