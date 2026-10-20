@@ -572,11 +572,11 @@
     {
       "id": "browser-art",
       "name": "Обложки для любых плееров / Cover Art Fallback",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "aboba",
       "description": "Обложка в медиа-виджетах, когда плеер её не отдаёт: превью YouTube, обложка локального файла, поиск в iTunes, og:image, иначе пиксельная кассета в цветах темы. / Cover art for MPRIS players that send none: YouTube thumbnail, local file art, iTunes search, og:image, or a pixel cassette in the current palette.",
-      "source": "https://github.com/AbobaAI/angelos-browser-art/releases/download/v1.0.0/browser-art-v1.0.0.zip",
-      "sha256": "f9cd7494b69149398499d2284807b4d58e85e826c8889405d4c57c1020a05068",
+      "source": "https://github.com/AbobaAI/angelos-browser-art/releases/download/v1.0.1/browser-art-v1.0.1.zip",
+      "sha256": "20d0f550b4c2209ca4044eba9b0c13cfdf06e8289905e11ba625549f8e6d3d37",
       "repository": "https://github.com/AbobaAI/angelos-browser-art",
       "license": "MIT",
       "themes": [
