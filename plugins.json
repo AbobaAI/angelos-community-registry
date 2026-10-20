@@ -538,6 +538,72 @@
       ],
       "license": "MIT",
       "status": "approved"
+    },
+    {
+      "id": "layout-osd-big",
+      "name": "Крупная OSD раскладки / Big Layout OSD",
+      "version": "1.0.0",
+      "author": "aboba",
+      "description": "Крупная всплывашка смены раскладки (EN/RU): масштаб 100–400%, позиция и время — как у встроенной OSD, которую плагин заменяет, пока включён. / A bigger keyboard-layout switch popup (100–400%) that replaces the built-in layout OSD while enabled.",
+      "source": "https://github.com/AbobaAI/angelos-layout-osd-big/releases/download/v1.0.0/layout-osd-big-v1.0.0.zip",
+      "sha256": "4d766ad1fabf89d5d9032e05e7d640aa6a55bd22c76cfe4a9bed3b0fae3a44a4",
+      "repository": "https://github.com/AbobaAI/angelos-layout-osd-big",
+      "license": "MIT",
+      "themes": [
+        "pixel",
+        "mac"
+      ],
+      "category": "Accessibility",
+      "tags": [
+        "osd",
+        "keyboard",
+        "layout",
+        "accessibility"
+      ],
+      "dependencies": [
+        "niri",
+        "AngelOS Niri and Config services"
+      ],
+      "permissions": [
+        "Write angelOS setting osd.layout (turns the built-in layout OSD off while enabled, back on when disabled)"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "browser-art",
+      "name": "Обложки для любых плееров / Cover Art Fallback",
+      "version": "1.0.0",
+      "author": "aboba",
+      "description": "Обложка в медиа-виджетах, когда плеер её не отдаёт: превью YouTube, обложка локального файла, поиск в iTunes, og:image, иначе пиксельная кассета в цветах темы. / Cover art for MPRIS players that send none: YouTube thumbnail, local file art, iTunes search, og:image, or a pixel cassette in the current palette.",
+      "source": "https://github.com/AbobaAI/angelos-browser-art/releases/download/v1.0.0/browser-art-v1.0.0.zip",
+      "sha256": "f9cd7494b69149398499d2284807b4d58e85e826c8889405d4c57c1020a05068",
+      "repository": "https://github.com/AbobaAI/angelos-browser-art",
+      "license": "MIT",
+      "themes": [
+        "pixel",
+        "mac"
+      ],
+      "category": "Audio",
+      "tags": [
+        "audio",
+        "music",
+        "covers",
+        "mpris",
+        "widgets"
+      ],
+      "dependencies": [
+        "curl",
+        "python3",
+        "python-pillow",
+        "ffmpeg (optional, embedded art)",
+        "AngelOS Lyrics service (sets internal Lyrics.artUrl)"
+      ],
+      "permissions": [
+        "Network: i.ytimg.com, itunes.apple.com, mzstatic.com and the playing page's site, only for tracks without a cover",
+        "Read the playing local audio file and its folder",
+        "Write cache in ~/.cache/angelos/browser-art"
+      ],
+      "status": "pending"
     }
   ]
 }
