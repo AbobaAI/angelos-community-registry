@@ -538,6 +538,44 @@
       ],
       "license": "MIT",
       "status": "approved"
+    },
+    {
+      "id": "crew-fight",
+      "name": "Драка человечков / Crew Fight",
+      "version": "2.0.0",
+      "author": "aboba",
+      "description": "Пиксельный бой двух человечков из звонка Discord (встроенные «Человечки» AngelOS): 8 видов оружия, комбо, криты, раунды, комментатор (ru/en), турнир с сеткой, пьедестал, CC0-звуки; без звонка — демо-бойцы. / A pixel boxing match between two people from your Discord call (AngelOS's built-in crew): 8 weapons, combos, crits, rounds, a ru/en announcer, tournament brackets, a podium and CC0 sounds; demo fighters without a call.",
+      "source": "https://github.com/AbobaAI/angelos-crew-fight/releases/download/v2.0.0/crew-fight-v2.0.0.zip",
+      "sha256": "68d8559dcc45f8d016966af47495cb15f044dbc9f0dc48e4713c34e64fffbe72",
+      "repository": "https://github.com/AbobaAI/angelos-crew-fight",
+      "license": "MIT",
+      "themes": [
+        "pixel",
+        "mac"
+      ],
+      "category": "Minigames",
+      "tags": [
+        "discord",
+        "crew",
+        "game",
+        "fun",
+        "tournament"
+      ],
+      "dependencies": [
+        "AngelOS Discord crew (Config.discord.crew, services/DiscordVoice)",
+        "QtMultimedia"
+      ],
+      "permissions": [
+        "Read the Discord call members AngelOS already reads (no own Discord connection)",
+        "Write angelOS setting discord.crewHidden (hides the two fighters' walking copies during a fight, restored afterwards)",
+        "Full-screen overlay windows while a fight/picker is open"
+      ],
+      "screenshots": [
+        "https://raw.githubusercontent.com/AbobaAI/angelos-crew-fight/main/screenshots/fight.gif",
+        "https://raw.githubusercontent.com/AbobaAI/angelos-crew-fight/main/screenshots/ru-win.png"
+      ],
+      "minAngelOSVersion": "6",
+      "status": "pending"
     }
   ]
 }
